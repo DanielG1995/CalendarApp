@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { Calendar, momentLocalizer } from 'react-big-calendar'
 import moment from 'moment'
 import { useDispatch } from 'react-redux'
@@ -12,7 +12,7 @@ import { messages } from '../../helpers/calendar-messages-es'
 import { CalendarEvent } from './CalendarEvent'
 import { CalendarModal } from './CalendarModal'
 import { openModal } from '../../actions/calendar'
-import { clearActiveEvent, setActiveEvent } from '../../actions/events'
+import { clearActiveEvent, setActiveEvent, startloadEvents } from '../../actions/events'
 import { AddNewFab } from '../ui/AddNewFab'
 import { DeleteFab } from '../ui/DeleteFab'
 
@@ -21,10 +21,14 @@ const localizer = momentLocalizer(moment);
 
 
 export const CalendarScreen = () => {
-    const { events } = useSelector(state => state.calendar)
-    const { activeEvent } = useSelector(state => state.calendar)
-    const [view, setView] = useState(localStorage.getItem('lastView') || 'month')
+    const { events } = useSelector(state => state.calendar);
+    const { activeEvent } = useSelector(state => state.calendar);
+    const { uid } = useSelector(state => state.auth);
+    const [view, setView] = useState(localStorage.getItem('lastView') || 'month');
     const dispatch = useDispatch()
+    useEffect(() => {
+        dispatch(startloadEvents());
+    }, [dispatch])
     const onDoubleClick = (e) => {
         dispatch(setActiveEvent(e))
         dispatch(openModal());
@@ -40,17 +44,22 @@ export const CalendarScreen = () => {
     }
 
     const eventStyleGetter = (event, start, end, isSelected) => {
+       
         const style = {
-            backgroundColor: '#367cf7',
+            backgroundColor: (uid===event.user._id)?'#367cf7':'#465660',
             borderRadius: '0px',
             opacity: '0.8',
             display: 'block',
             color: 'white'
 
         }
+
+        return{
+            style
+        }
     };
 
-    const selectSlot=()=>{
+    const selectSlot = () => {
         dispatch(clearActiveEvent());
     }
 
@@ -74,7 +83,7 @@ export const CalendarScreen = () => {
             />
             <CalendarModal />
             <AddNewFab />
-            {activeEvent&&<DeleteFab />}
+            {activeEvent && <DeleteFab />}
         </>
 
 

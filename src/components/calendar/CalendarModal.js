@@ -7,7 +7,7 @@ import { useSelector, useDispatch } from 'react-redux'
 import { closeModal } from '../../actions/calendar'
 
 import './modal.css';
-import { addNewEvent, clearActiveEvent, editEvent } from '../../actions/events';
+import { clearActiveEvent, startAddNewEvent, startEditEvent } from '../../actions/events';
 
 const customStyles = {
     content: {
@@ -25,7 +25,7 @@ Modal.setAppElement('#root');
 const now = moment().minutes(0).second(0).add(1, 'hours');
 const initEvent = {
     title: '',
-    notas: '',
+    notes: '',
     start: now.toDate(),
     end: now.add(1, 'hours').toDate()
 }
@@ -45,13 +45,13 @@ export const CalendarModal = () => {
     useEffect(() => {
         if (activeEvent) {
             setFormValues({ ...activeEvent });
-        }else{
+        } else {
             setFormValues(initEvent)
         }
     }, [activeEvent])
 
 
-    const { title, notas, start, end } = formValues;
+    const { title, notes, start, end } = formValues;
 
     const handleInputChange = ({ target }) => {
         setFormValues({
@@ -97,11 +97,9 @@ export const CalendarModal = () => {
         setValidTitle(true);
         const event = { ...formValues };
         if (event.id) {
-            event.user = { name: 'Daniel' };
-            dispatch(editEvent(event));
+            dispatch(startEditEvent(event));
         } else {
-            event.id = new Date().getTime();
-            dispatch(addNewEvent(event));
+            dispatch(startAddNewEvent(event));
         }
         closeModalUI();
     }
@@ -161,8 +159,8 @@ export const CalendarModal = () => {
                         className="form-control"
                         placeholder="Notas"
                         rows="5"
-                        name="notas"
-                        value={notas}
+                        name="notes"
+                        value={notes}
                         onChange={handleInputChange}
                     ></textarea>
                     <small id="emailHelp" className="form-text text-muted">Información adicional</small>

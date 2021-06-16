@@ -12,8 +12,3 @@ export const closeModal = () => {
     }
 }
 
-export const deleteNote = () => {
-    return {
-        type: types.eventDelete,
-    }
-}

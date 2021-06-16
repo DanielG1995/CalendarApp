@@ -1,12 +1,13 @@
-import React, { useEffect } from 'react';
+import React  from 'react';
 import { useDispatch } from 'react-redux';
-import { finishCheking, startLogin } from '../../actions/auth';
+import Swal from 'sweetalert2';
+import {  startLogin, startRegister } from '../../actions/auth';
 import { useForm } from '../../hooks/useForm';
 import './login.css';
 
 export const LoginScreen = () => {
 
-    const [values, handleInputChange, reset] = useForm({
+    const [values, handleInputChange, ] = useForm({
         email: '',
         password: '',
         emailR: '',
@@ -18,9 +19,6 @@ export const LoginScreen = () => {
 
     const { email, emailR, password, password1, password2, name } = values
     const dispatch = useDispatch();
-    useEffect(() => {
-        dispatch(finishCheking());
-    }, [dispatch])
 
     const handleSubmitLogin = (e) => {
         e.preventDefault();
@@ -29,7 +27,10 @@ export const LoginScreen = () => {
 
     const handleSubmitRegister = (e) => {
         e.preventDefault();
-        console.log('Register', name, emailR, password1, password2)
+        if (!(password1 === password2)) {
+            return Swal.fire('Advertencia', 'Las contraseñas deben ser iguales', 'warning');
+        }
+        dispatch(startRegister(name, emailR, password1));
     }
 
 
